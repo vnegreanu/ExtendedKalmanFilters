@@ -46,6 +46,13 @@ class KalmanFilter {
    */
   void UpdateEKF(const Eigen::VectorXd &z);
 
+  /**
+   * Helper function to calculate the angle detection
+   * @param y = z -z_pred
+   * @return y -> updated with angle correction
+   */
+  Eigen::VectorXd AngleDetection(const Eigen::VectorXd &y);
+
   // state vector
   Eigen::VectorXd x_;
 
@@ -64,5 +71,7 @@ class KalmanFilter {
   // measurement covariance matrix
   Eigen::MatrixXd R_;
 };
+
+
 
 #endif // KALMAN_FILTER_H_
