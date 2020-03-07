@@ -69,15 +69,10 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   VectorXd z_pred(3);
   z_pred << rho, phi, rho_dot;
   VectorXd y = z - z_pred;
-  // Normalize the angle
-  while (y(1) > M_PI) 
-  {
-   y(1) -= M_PI;
-  }
-  while (y(1) < -M_PI) 
-  {
-   y(1) += M_PI;
-  }
+
+  //adjust angle on axis with helper function
+  AngleDetection(y);
+
   MatrixXd Htrans = H_.transpose();
   MatrixXd S = H_ * P_ * Htrans + R_;
   MatrixXd Sinv = S.inverse();
@@ -87,8 +82,22 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   x_ = x_ + (K  * y);
   //determine x_ size
   long x_size = x_.size();
-  //set up Identity matrix to match x_ size limits
-  MatrixXd I = MatrixXd::Identity(x_size, x_size);
-  P_ = (I - K * H_) * P_;
+  P_ -= K * H_ * P_;
   
+}
+
+Eigen::VectorXd KalmanFilter::AngleDetection(const VectorXd &y)
+{
+
+	// Normalize the angle
+	while (y(1) > M_PI)
+	{
+		y(1) -= M_PI;
+	}
+	while (y(1) < -M_PI)
+	{
+		y(1) += M_PI;
+	}
+
+	return y;
 }
