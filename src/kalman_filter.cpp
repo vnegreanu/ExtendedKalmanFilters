@@ -45,9 +45,7 @@ void KalmanFilter::Update(const VectorXd &z) {
   x_ = x_ + (K  * y);
   //determine x_ size
   long x_size = x_.size();
-  //set up Identity matrix to match x_ size limits
-  MatrixXd I = MatrixXd::Identity(x_size, x_size);
-  P_ = (I - K * H_) * P_;
+  P_ -= K * H_ * P_;
   
   
 }
